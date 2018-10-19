@@ -1,6 +1,6 @@
 import Cocoa
 
-public final class DockProgress {
+public final class DockProgress : NSObject {
 	private static let appIcon = NSApp.applicationIconImage!
 	private static var previousProgressValue: Double = 0
 	private static var progressObserver: NSKeyValueObservation?
@@ -28,6 +28,10 @@ public final class DockProgress {
 		}
 	}
 
+	@objc public static func setProgressValue(_ newProgressValue: NSNumber) {
+        progressValue = newProgressValue.doubleValue
+    }
+
 	public enum ProgressStyle {
 		case bar
 		/// TODO: Make `color` optional when https://github.com/apple/swift-evolution/blob/master/proposals/0155-normalize-enum-case-representation.md is shipping in Swift
@@ -36,6 +40,17 @@ public final class DockProgress {
 	}
 
 	public static var style: ProgressStyle = .bar
+	
+	@objc public static func setProgressStyle(_ newStyle: NSString, radius: NSNumber, color: NSColor){
+		switch newStyle {
+		case "bar":
+			style = .bar
+		case "circle":
+			style = .circle(radius: radius.doubleValue, color: color)
+		default:
+			style = .bar
+		}
+	}
 
 	/// TODO: Make the progress smoother by also animating the steps between each call to `updateDockIcon()`
 	private static func updateDockIcon() {
